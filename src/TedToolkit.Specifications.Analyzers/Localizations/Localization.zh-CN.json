@@ -1,0 +1,74 @@
+{
+  "TSPEC001": {
+    "Title": "不支持的规格实体",
+    "Message": "实体“{0}”必须是可访问、封闭且非文件局部的类、结构或接口"
+  },
+  "TSPEC002": {
+    "Title": "不支持的规格属性类型",
+    "Message": "属性“{0}”的类型“{1}”不受支持；请改为公开可查询的标量属性"
+  },
+  "TSPEC003": {
+    "Title": "生成代码无法读取此属性",
+    "Message": "属性“{0}”必须可读、非索引器，且可由生成代码访问"
+  },
+  "TSPEC004": {
+    "Title": "需要 C# 14",
+    "Message": "生成的规格扩展属性需要 C# 14 或更高版本"
+  },
+  "TSPEC005": {
+    "Title": "属性访问器必须自动生成",
+    "Message": "请使用 Selection.For<TEntity>() 和生成的属性；无法安全翻译手写访问器"
+  },
+  "TSPEC006": {
+    "Title": "规格尚未完成",
+    "Message": "选择器无法求值或组合谓词；请先构造比较，得到 Specification<TCandidate>"
+  },
+  "TSPEC007": {
+    "Title": "多余的空值检查",
+    "Message": "所选成员“{0}”是不可为空的值类型"
+  },
+  "TSPEC008": {
+    "Title": "Object 方法不会构造规格",
+    "Message": "“{0}”不会构造规格；请使用选择器运算符、EqualTo、In 或逻辑组合"
+  },
+  "TSPEC009": {
+    "Title": "隐藏属性存在歧义",
+    "Message": "属性“{0}”隐藏了另一个属性；请重命名或使用 override"
+  },
+  "TSPEC010": {
+    "Title": "字符串无法移植到 SQL",
+    "Message": "规格字符串必须是有效的 Unicode，且不能包含零字符"
+  },
+  "TSPEC011": {
+    "Title": "规格语法不允许自行扩展",
+    "Message": "“{0}”不能继承封闭的框架类型；请通过组合构造规格"
+  },
+  "TSPEC012": {
+    "Title": "计算属性需要等值的持久化列",
+    "Message": "属性“{0}”包含计算 getter；只能将其映射到值完全相同的持久化列"
+  },
+  "TSPEC013": {
+    "Title": "所选成员不支持此操作",
+    "Message": "所选成员不支持操作“{0}”；请使用其生成类型提供的操作"
+  },
+  "TSPEC014": {
+    "Title": "规格值不是有限数",
+    "Message": "规格中的浮点值必须是有限数"
+  },
+  "TSPEC015": {
+    "Title": "字符串匹配模式为空",
+    "Message": "字符串匹配模式不能为 null；请使用 IsNull 检查空值"
+  },
+  "TSPEC016": {
+    "Title": "对象检查不会构造规格",
+    "Message": "此表达式检查的是规格对象本身；请使用 IsNull、IsNotNull 或 EqualTo 构造规格"
+  },
+  "TSPEC018": {
+    "Title": "属性名称与选择 API 冲突",
+    "Message": "属性“{0}”与 Selection 或 Object 的实例成员重名；请重命名模型属性，或使用具有等价但名称不同属性的模型"
+  },
+  "TSPEC017": {
+    "Title": "规格求值需要候选对象",
+    "Message": "规格不能直接用作布尔条件；请调用 IsSatisfiedBy(candidate)"
+  }
+}

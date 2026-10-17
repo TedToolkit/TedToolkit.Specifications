@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(RepositoryRoot)externals/TedToolkit/props/NugetPackage.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <IsAotCompatible>true</IsAotCompatible>
+    <Description>Parameterized SQLite and PostgreSQL translation of TedToolkit specifications.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../TedToolkit.Specifications/TedToolkit.Specifications.csproj" />
+  </ItemGroup>
+</Project>

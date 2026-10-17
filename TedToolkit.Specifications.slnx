@@ -1,0 +1,39 @@
+<Solution>
+  <Folder Name="/Build/">
+    <Project Path="Build/Build.csproj"><Build Project="false" /></Project>
+  </Folder>
+  <Folder Name="/SolutionItems/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".gitignore" />
+    <File Path=".gitmodules" />
+    <File Path=".github/workflows/verify.yml" />
+    <File Path="AGENTS.md" />
+    <File Path="CLAUDE.md" />
+    <File Path="COPYING" />
+    <File Path="COPYING.LESSER" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+    <File Path="global.json" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/TedToolkit.Specifications.Sql.Sqlite/TedToolkit.Specifications.Sql.Sqlite.csproj" />
+    <Project Path="src/TedToolkit.Specifications.Sql.PostgreSql/TedToolkit.Specifications.Sql.PostgreSql.csproj" />
+    <Project Path="src/TedToolkit.Specifications.Analyzers/TedToolkit.Specifications.Analyzers.csproj" />
+    <Project Path="src/TedToolkit.Specifications.Sql/TedToolkit.Specifications.Sql.csproj" />
+    <Project Path="src/TedToolkit.Specifications/TedToolkit.Specifications.csproj">
+      <BuildDependency Project="src/TedToolkit.Specifications.Analyzers/TedToolkit.Specifications.Analyzers.csproj" />
+    </Project>
+  </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests/tests.props" />
+    <Project Path="tests/TedToolkit.Specifications.Analyzers.Tests/TedToolkit.Specifications.Analyzers.Tests.csproj" />
+    <Project Path="tests/TedToolkit.Specifications.Sql.Tests/TedToolkit.Specifications.Sql.Tests.csproj">
+      <BuildDependency Project="src/TedToolkit.Specifications.Analyzers/TedToolkit.Specifications.Analyzers.csproj" />
+    </Project>
+    <Project Path="tests/TedToolkit.Specifications.Tests/TedToolkit.Specifications.Tests.csproj">
+      <BuildDependency Project="src/TedToolkit.Specifications.Analyzers/TedToolkit.Specifications.Analyzers.csproj" />
+    </Project>
+  </Folder>
+</Solution>

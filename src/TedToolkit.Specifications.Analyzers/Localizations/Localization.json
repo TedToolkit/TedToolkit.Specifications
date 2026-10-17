@@ -1,0 +1,74 @@
+{
+  "TSPEC001": {
+    "Title": "Unsupported specification entity",
+    "Message": "Entity '{0}' must be an accessible, closed, non-file-local class, struct, or interface"
+  },
+  "TSPEC002": {
+    "Title": "Unsupported specification property type",
+    "Message": "Property '{0}' has unsupported type '{1}'; expose a queryable scalar instead"
+  },
+  "TSPEC003": {
+    "Title": "Property cannot be read by generated code",
+    "Message": "Property '{0}' must be a readable, non-indexed property accessible from generated code"
+  },
+  "TSPEC004": {
+    "Title": "C# 14 is required",
+    "Message": "Generated specification extension properties require C# 14 or later"
+  },
+  "TSPEC005": {
+    "Title": "Property accessors must be generated",
+    "Message": "Use Selection.For<TEntity>() and generated properties; handwritten accessors cannot be translated safely"
+  },
+  "TSPEC006": {
+    "Title": "Incomplete specification",
+    "Message": "A selection cannot evaluate or compose predicates; build a comparison to obtain a Specification<TCandidate>"
+  },
+  "TSPEC007": {
+    "Title": "Redundant null check",
+    "Message": "Field '{0}' is a non-nullable value type"
+  },
+  "TSPEC008": {
+    "Title": "Object methods do not build rules",
+    "Message": "'{0}' does not build a specification; use field operators, EqualTo, In, or logical composition"
+  },
+  "TSPEC009": {
+    "Title": "Hidden properties are ambiguous",
+    "Message": "Property '{0}' hides another property; rename it or use an override"
+  },
+  "TSPEC010": {
+    "Title": "String is not portable to SQL",
+    "Message": "Specification strings must be valid Unicode without zero characters"
+  },
+  "TSPEC011": {
+    "Title": "Specification grammar is closed",
+    "Message": "'{0}' cannot derive from the closed framework types; compose specifications instead"
+  },
+  "TSPEC012": {
+    "Title": "Computed getter requires a persisted equivalent",
+    "Message": "Property '{0}' has a computed getter; map it only to a persisted column with identical values"
+  },
+  "TSPEC013": {
+    "Title": "Unsupported specification field operation",
+    "Message": "Operation '{0}' is not supported by this field; use the operations exposed by its generated type"
+  },
+  "TSPEC014": {
+    "Title": "Non-finite specification value",
+    "Message": "Specification floating-point values must be finite"
+  },
+  "TSPEC015": {
+    "Title": "Null string pattern",
+    "Message": "String matching requires a non-null pattern; use IsNull to test for null"
+  },
+  "TSPEC016": {
+    "Title": "Object tests do not build a rule",
+    "Message": "This expression inspects a specification object; use IsNull, IsNotNull, or EqualTo to build a rule"
+  },
+  "TSPEC017": {
+    "Title": "Specification evaluation requires a candidate",
+    "Message": "A specification cannot be used as a Boolean condition; call IsSatisfiedBy(candidate)"
+  },
+  "TSPEC018": {
+    "Title": "Property name conflicts with the selection API",
+    "Message": "Property '{0}' conflicts with a Selection or Object instance member; rename the model property or use a model with an equivalent differently named property"
+  }
+}

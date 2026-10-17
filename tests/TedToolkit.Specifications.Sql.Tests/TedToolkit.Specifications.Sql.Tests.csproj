@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../tests.props" />
+  <ItemGroup Condition="'$(PublishAot)' == 'true'">
+    <!-- Exported API metadata is verified on the untrimmed assembly in the managed test run. -->
+    <Compile Remove="SqlSpecificationTests/PublicApiTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/TedToolkit.Specifications.Sql/TedToolkit.Specifications.Sql.csproj" />
+    <ProjectReference Include="../../src/TedToolkit.Specifications.Sql.Sqlite/TedToolkit.Specifications.Sql.Sqlite.csproj" />
+    <ProjectReference Include="../../src/TedToolkit.Specifications.Sql.PostgreSql/TedToolkit.Specifications.Sql.PostgreSql.csproj" />
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="../../src/TedToolkit.Specifications.Analyzers/bin/$(Configuration)/netstandard2.0/TedToolkit.Specifications.Analyzers.dll" />
+    <Analyzer Include="../../src/TedToolkit.Specifications.Analyzers/bin/$(Configuration)/netstandard2.0/TedToolkit.RoslynHelper.dll" />
+    <Analyzer Include="../../src/TedToolkit.Specifications.Analyzers/bin/$(Configuration)/netstandard2.0/TedToolkit.Localizations.dll" />
+    <Analyzer Include="../../src/TedToolkit.Specifications.Analyzers/bin/$(Configuration)/netstandard2.0/ZString.dll" />
+    <Analyzer Include="../../src/TedToolkit.Specifications.Analyzers/bin/$(Configuration)/netstandard2.0/System.Memory.dll" />
+  </ItemGroup>
+</Project>

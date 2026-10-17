@@ -1,0 +1,146 @@
+name: SQL and Native AOT verification
+
+on:
+  push:
+    branches: [development]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: specification_test
+          POSTGRES_PASSWORD: specification_test
+          POSTGRES_DB: specification_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      SPECIFICATION_POSTGRES: Host=localhost;Port=5432;Database=specification_test;Username=specification_test;Password=specification_test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+      - name: Build all targets
+        run: dotnet build TedToolkit.Specifications.slnx -c Release -m:1 -p:UseSharedCompilation=false
+      - name: Run TUnit tests with PostgreSQL
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SPECIFICATION_POSTGRES)) { throw 'PostgreSQL is required for CI verification.' }
+          foreach ($project in @('TedToolkit.Specifications.Tests', 'TedToolkit.Specifications.Analyzers.Tests', 'TedToolkit.Specifications.Sql.Tests')) {
+              dotnet run --project "tests/$project/$project.csproj" -c Release --no-build -- --no-progress --output Detailed --minimum-expected-tests 1
+              if ($LASTEXITCODE -ne 0) { throw "Tests failed: $project." }
+          }
+          foreach ($framework in @('net8.0', 'net9.0')) {
+              foreach ($project in @('TedToolkit.Specifications.Tests', 'TedToolkit.Specifications.Sql.Tests')) {
+                  dotnet run --project "tests/$project/$project.csproj" -c Release "-p:TestFramework=$framework" -- --no-progress --output Detailed --minimum-expected-tests 1
+                  if ($LASTEXITCODE -ne 0) { throw "Tests failed: $project on $framework." }
+              }
+          }
+      - name: Pack libraries
+        run: dotnet pack TedToolkit.Specifications.slnx -c Release --no-build -o .artifacts/packages
+      - name: Verify README and Analyzer from NuGet packages
+        run: |
+          $version = ([xml](Get-Content -LiteralPath 'Directory.Build.props' -Raw)).Project.PropertyGroup.Version
+          $consumer = Join-Path $PWD '.artifacts/consumer'
+          $packages = Join-Path $PWD '.artifacts/packages'
+          $cache = Join-Path $PWD '.artifacts/consumer-packages'
+          New-Item -ItemType Directory -Path $consumer -Force | Out-Null
+          Set-Content -Path "$consumer/Directory.Build.props", "$consumer/Directory.Packages.props" -Value '<Project />'
+          @"
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <TargetFramework>net10.0</TargetFramework>
+              <OutputType>Exe</OutputType>
+              <LangVersion>14.0</LangVersion>
+              <ImplicitUsings>enable</ImplicitUsings>
+              <Nullable>enable</Nullable>
+              <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="TedToolkit.Specifications.Sql.Sqlite" Version="$version" />
+              <PackageReference Include="TedToolkit.Specifications.Sql.PostgreSql" Version="$version" />
+            </ItemGroup>
+          </Project>
+          "@ | Set-Content -LiteralPath "$consumer/Consumer.csproj"
+          $example = [regex]::Match((Get-Content -LiteralPath 'README.md' -Raw), '(?s)```csharp\r?\n(.*?)```')
+          if (-not $example.Success) { throw 'README.md must contain a runnable first C# example.' }
+          $exampleSource = $example.Groups[1].Value
+          $models = $exampleSource.IndexOf('public sealed record Order', [StringComparison]::Ordinal)
+          if ($models -lt 0) { throw 'Update the README verification when its example models change.' }
+          $checks = @'
+          if (!matches || !eligible.IsSatisfiedBy(new Order(120m, null))
+              || eligible.IsSatisfiedBy(new Order(10m, new Customer("Ada")))
+              || eligible.IsSatisfiedBy(new Order(120m, new Customer("Grace"))))
+              throw new InvalidOperationException("The README predicate returned an unexpected result.");
+          if (column != "\"Amount\"" || parameters.Count != 2
+              || parameters["spec0"] is not decimal amountValue || amountValue != 100m
+              || parameters["spec1"] is not string nameValue || nameValue != "Ada")
+              throw new InvalidOperationException("The README SQL bindings returned unexpected values.");
+
+          '@
+          Set-Content -LiteralPath "$consumer/Program.cs" -Value $exampleSource.Insert($models, $checks + "`n")
+          dotnet build "$consumer/Consumer.csproj" -c Release "-p:RestoreAdditionalProjectSources=$packages" "-p:RestorePackagesPath=$cache"
+          if ($LASTEXITCODE -ne 0) { throw 'The packaged README example failed to compile.' }
+          dotnet run --project "$consumer/Consumer.csproj" -c Release --no-build
+          if ($LASTEXITCODE -ne 0) { throw 'The packaged README example failed to run.' }
+          @'
+          using TedToolkit.Specifications;
+          public static class InvalidUsage
+          {
+              public static void Run()
+              {
+                  var wrong = new MemberSelection<Order, Order, decimal>(Selection.For<Order>(), "Amount", order => order.Amount + 1);
+                  var parent = wrong.Parent;
+                  var name = wrong.Name;
+                  var comparison = (object)Selection.For<string?>() == null;
+                  var truth = Specification.True<Order>().IsTrue;
+                  var collision = Selection.For<Conflicting>().Compare > 0;
+                  if (Selection.For<int>() > 0) { }
+              }
+          }
+          public sealed record Conflicting(int Compare);
+          '@ | Set-Content -LiteralPath "$consumer/InvalidUsage.cs"
+          $errors = dotnet build "$consumer/Consumer.csproj" -c Release --no-restore -p:PreferredUILang=en-US 2>&1
+          if ($LASTEXITCODE -eq 0) { throw 'The packaged Analyzer accepted invalid usage.' }
+          $errors | Set-Content -LiteralPath "$consumer/expected-analyzer-errors.log"
+          foreach ($code in @('TSPEC005', 'TSPEC016', 'TSPEC017', 'TSPEC018')) {
+              if (($errors -join "`n") -notmatch "\b$code\b") { throw "Missing packaged diagnostic: $code." }
+          }
+          foreach ($member in @('Parent', 'Name', 'IsTrue')) {
+              if (-not ($errors | Where-Object { $_ -match 'CS(?:0122|1061|1929)' -and $_ -match "\b$member\b" })) {
+                  throw "Unexpected public member: $member."
+              }
+          }
+          Remove-Item -LiteralPath "$consumer/InvalidUsage.cs"
+          exit 0
+      - name: Publish and run Native AOT TUnit tests
+        run: |
+          $runtime = [System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier
+          $suffix = if ($IsWindows) { '.exe' } else { '' }
+          foreach ($project in @('TedToolkit.Specifications.Tests', 'TedToolkit.Specifications.Sql.Tests')) {
+              $output = Join-Path $PWD ".artifacts/aot/$project"
+              dotnet publish "tests/$project/$project.csproj" -c Release -r $runtime --self-contained -p:NativeAotTests=true -p:UseSharedCompilation=false -m:1 -o $output
+              if ($LASTEXITCODE -ne 0) { throw "Native AOT publish failed: $project." }
+              & (Join-Path $output "$project$suffix") --no-progress --output Detailed --minimum-expected-tests 1
+              if ($LASTEXITCODE -ne 0) { throw "Native AOT tests failed: $project." }
+          }

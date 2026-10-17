@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../tests.props" />
+  <ItemGroup>
+    <ProjectReference Include="../../src/TedToolkit.Specifications/TedToolkit.Specifications.csproj" />
+    <ProjectReference Include="../../src/TedToolkit.Specifications.Sql/TedToolkit.Specifications.Sql.csproj" />
+    <ProjectReference Include="../../src/TedToolkit.Specifications.Analyzers/TedToolkit.Specifications.Analyzers.csproj" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="TedToolkit.Localizations" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

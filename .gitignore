@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+.artifacts/
+TestResults/
+**/TestResults/
+.vs/
+.idea/
+*.user
+
+output/

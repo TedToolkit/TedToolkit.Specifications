@@ -1,0 +1,24 @@
+# Project instructions
+
+- Implement in C#. Write documentation, XML comments, runtime messages, and tests in English.
+- The main branch is `development`; repository and package names use `TedToolkit.Specifications`.
+- `Selection.For<T>()` returns `Selection<T, T>`. Generated properties retain the candidate and select a new value type.
+- Only `Specification<TCandidate>` provides `IsSatisfiedBy`, And, Or, and Not. Do not implicitly convert Boolean selections.
+- Use concrete comparison and composite specifications directly; do not add ISpecification, Rule, Field, node, or factory abstractions.
+- Generate one level of properties per selected type actually used. Support nested access without recursively expanding a model graph.
+- Keep core independent of SQL storage restrictions and runtime reflection over entity members.
+- Keep CLR-to-SQL classification and SQL value validation in `TedToolkit.Specifications.Sql`.
+- Put database syntax in `Sql.Sqlite` and `Sql.PostgreSql` subclasses of `SqlTranslator`; both ToSql overloads return strings.
+- Use TedToolkit.Localizations generated strings directly for Analyzer titles and messages, with standard base and zh-CN JSON resources. Do not add a custom LocalizableString adapter or culture-selection rules.
+- Generated member accessors call properties directly. Do not add arbitrary predicates or expression compilation.
+- Every SQL leaf produces a non-null Boolean, including under Not. Explicitly reject unsupported translations.
+- Traverse logical compositions iteratively in memory and SQL; do not store predicate depth or impose a fixed framework nesting limit.
+- Keep true/false operators for &&/||, without a public IsTrue member; allow CA2225 only at the conditional truth operator.
+- Default SQL column names to complete member paths quoted as single identifiers. Allow optional map overrides and scalar-root bindings. Do not infer joins or substitute default values for missing parents.
+- Package the generator and Analyzer with core and verify isolated NuGet consumption.
+- Pack Analyzer DLLs directly in the core csproj and set solution BuildDependency entries; do not add Analyzer asset props or custom packaging targets.
+- Keep Build as a single Program.cs using Sourcy paths and the standard TedPipeline.ExecuteAsync entry point, following Localizations.
+- Use the shared `externals/TedToolkit` submodule and reusable workflow. The Build project is orchestration and excluded from normal solution builds.
+- Run TUnit tests with `dotnet run --project <test-project> -c Release`.
+- Use direct dotnet commands locally. The verification workflow covers real PostgreSQL, isolated NuGet consumption, and Native AOT; PostgreSQL uses `SPECIFICATION_POSTGRES`.
+- Verify Native AOT by publishing and executing the core and SQL TUnit projects; keep usage examples in README files rather than a Sample project.
