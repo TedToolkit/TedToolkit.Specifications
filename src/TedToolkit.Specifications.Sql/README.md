@@ -77,3 +77,6 @@ The common SQL assembly exports only `SqlTranslator` and `SqlColumnMap<TCandidat
 
 Runtime targets are .NET 8, 9, and 10; generated member properties require C# 14. See [repository setup and local packaging](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/README.md), the [core guide](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/src/TedToolkit.Specifications/README.md), and [diagnostic catalog](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/docs/diagnostics.md).
 
+## Agent skill
+
+The `build-typed-specifications` skill ships in `TedToolkit.Specifications`, which this package restores as a dependency. If your project references only this package, get the resolved `TedToolkit.Specifications` version from `dotnet package list --include-transitive` and import the skill with `dotnet-package-skills install --package TedToolkit.Specifications@<resolved-version>`.
