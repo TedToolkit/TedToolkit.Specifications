@@ -8,9 +8,4 @@
   <ItemGroup>
     <ProjectReference Include="../TedToolkit.Specifications.Sql/TedToolkit.Specifications.Sql.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="../../.agents/skills/translate-specifications-to-sqlite/**/*"
-          Pack="true" PackagePath="skills/translate-specifications-to-sqlite/" />
-  </ItemGroup>
 </Project>

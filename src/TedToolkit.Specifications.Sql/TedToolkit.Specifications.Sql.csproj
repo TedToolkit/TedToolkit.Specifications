@@ -8,9 +8,4 @@
   <ItemGroup>
     <ProjectReference Include="../TedToolkit.Specifications/TedToolkit.Specifications.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="../../.agents/skills/bind-specification-sql-parameters/**/*"
-          Pack="true" PackagePath="skills/bind-specification-sql-parameters/" />
-  </ItemGroup>
 </Project>

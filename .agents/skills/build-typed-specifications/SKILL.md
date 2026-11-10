@@ -1,11 +1,20 @@
 ---
 name: build-typed-specifications
 description: >-
-  Use TedToolkit.Specifications to build generated typed member selections and compose reusable business predicates in C#.
+  Use TedToolkit.Specifications for generated C# predicates, in-memory evaluation, and parameterized SQLite or PostgreSQL translation.
 ---
 
 # Build Typed Specifications
 
-- Start with `Selection.For<T>()` and use the generated member chain to select the required value. Compare selections with the operators exposed by the package.
-- Compose `Specification<T>` predicates with `And`, `Or`, or `Not` and evaluate with `IsSatisfiedBy`. Check the behavior for optional nested members.
-- Build with C# 14 to surface generator diagnostics. Cover the rule’s boundary cases in memory and use the SQL package only when a database translation is needed.
+Use C# 14 with the SDK required by the package. Start with `Selection.For<T>()`, follow generated member accessors, and compare the selected values to build a `Specification<T>`.
+
+```csharp
+using TedToolkit.Specifications;
+
+var order = Selection.For<Order>();
+var eligible = order.Amount > 100m;
+```
+
+Use `IsSatisfiedBy` for in-memory evaluation. Compose actual predicates with `And`, `Or`, and `Not`. Check nested nullable members and include values exactly on comparison boundaries.
+
+Use [SQL translation](references/sql.md) for a database condition or projection. Check that supported in-memory and translated predicates select the same boundary rows.
