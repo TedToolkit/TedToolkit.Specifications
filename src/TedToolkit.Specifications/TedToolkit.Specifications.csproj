@@ -13,4 +13,9 @@
     <None Include="../TedToolkit.Specifications.Analyzers/bin/$(Configuration)/netstandard2.0/ZString.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="../TedToolkit.Specifications.Analyzers/bin/$(Configuration)/netstandard2.0/System.Memory.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../.agents/skills/build-typed-specifications/**/*"
+          Pack="true" PackagePath="skills/build-typed-specifications/" />
+  </ItemGroup>
 </Project>
