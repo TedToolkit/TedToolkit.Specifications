@@ -2,5 +2,8 @@
   "sdk": {
     "version": "11.0.100",
     "rollForward": "latestFeature"
+  },
+  "msbuild-sdks": {
+    "TedToolkit.Build.Sdk": "0.1.0-preview.1"
   }
 }

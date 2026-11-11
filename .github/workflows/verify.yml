@@ -32,8 +32,6 @@ jobs:
       SPECIFICATION_POSTGRES: Host=localhost;Port=5432;Database=specification_test;Username=specification_test;Password=specification_test
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '11.0.x'
@@ -66,10 +64,28 @@ jobs:
         run: |
           $version = ([xml](Get-Content -LiteralPath 'Directory.Build.props' -Raw)).Project.PropertyGroup.Version
           $consumer = Join-Path $PWD '.artifacts/consumer'
-          $packages = Join-Path $PWD '.artifacts/packages'
           $cache = Join-Path $PWD '.artifacts/consumer-packages'
           New-Item -ItemType Directory -Path $consumer -Force | Out-Null
           Set-Content -Path "$consumer/Directory.Build.props", "$consumer/Directory.Packages.props" -Value '<Project />'
+          @'
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="verified-packages" value="../packages" />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+            <packageSourceMapping>
+              <clear />
+              <packageSource key="verified-packages">
+                <package pattern="TedToolkit.Specifications" />
+                <package pattern="TedToolkit.Specifications.*" />
+              </packageSource>
+              <packageSource key="nuget.org">
+                <package pattern="*" />
+              </packageSource>
+            </packageSourceMapping>
+          </configuration>
+          '@ | Set-Content -LiteralPath "$consumer/NuGet.Config"
           @"
           <Project Sdk="Microsoft.NET.Sdk">
             <PropertyGroup>
@@ -103,7 +119,7 @@ jobs:
 
           '@
           Set-Content -LiteralPath "$consumer/Program.cs" -Value $exampleSource.Insert($models, $checks + "`n")
-          dotnet build "$consumer/Consumer.csproj" -c Release "-p:RestoreAdditionalProjectSources=$packages" "-p:RestorePackagesPath=$cache"
+          dotnet build "$consumer/Consumer.csproj" -c Release "-p:RestorePackagesPath=$cache"
           if ($LASTEXITCODE -ne 0) { throw 'The packaged README example failed to compile.' }
           dotnet run --project "$consumer/Consumer.csproj" -c Release --no-build
           if ($LASTEXITCODE -ne 0) { throw 'The packaged README example failed to run.' }

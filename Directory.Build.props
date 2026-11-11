@@ -1,5 +1,5 @@
 <Project>
-  <Import Project="$(MSBuildThisFileDirectory)externals/TedToolkit/props/CodeAnalysis.props" />
+  <Import Project="CodeAnalysis.props" Sdk="TedToolkit.Build.Sdk" />
   <ItemGroup>
     <PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
   </ItemGroup>
