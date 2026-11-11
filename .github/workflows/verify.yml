@@ -40,6 +40,7 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
+            11.0.x
       - run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
       - name: Build all targets
         run: dotnet build TedToolkit.Specifications.slnx -c Release -m:1 -p:UseSharedCompilation=false
@@ -50,7 +51,7 @@ jobs:
               dotnet run --project "tests/$project/$project.csproj" -c Release --no-build -- --no-progress --output Detailed --minimum-expected-tests 1
               if ($LASTEXITCODE -ne 0) { throw "Tests failed: $project." }
           }
-          foreach ($framework in @('net8.0', 'net9.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
               foreach ($project in @('TedToolkit.Specifications.Tests', 'TedToolkit.Specifications.Sql.Tests')) {
                   dotnet run --project "tests/$project/$project.csproj" -c Release "-p:TestFramework=$framework" -- --no-progress --output Detailed --minimum-expected-tests 1
                   if ($LASTEXITCODE -ne 0) { throw "Tests failed: $project on $framework." }
@@ -69,7 +70,7 @@ jobs:
           @"
           <Project Sdk="Microsoft.NET.Sdk">
             <PropertyGroup>
-              <TargetFramework>net10.0</TargetFramework>
+              <TargetFramework>net11.0</TargetFramework>
               <OutputType>Exe</OutputType>
               <LangVersion>14.0</LangVersion>
               <ImplicitUsings>enable</ImplicitUsings>

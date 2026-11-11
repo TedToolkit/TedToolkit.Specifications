@@ -29,7 +29,7 @@ public sealed record Customer(string? Name);
 
 Generated member properties expose the abstract selection API. The public `MemberSelection` constructor is a bridge for generated code in another assembly; its `Parent` and `Name` metadata are internal. See the [public API boundary](src/TedToolkit.Specifications/README.md#public-api-boundary).
 
-The runtime libraries target .NET 8, 9, and 10 and support trimming and Native AOT. Generated extension properties require **C# 14 and a compatible .NET 10 SDK**, including when targeting .NET 8. Set `<LangVersion>14.0</LangVersion>` in the consuming project.
+The runtime libraries target .NET 8, 9, 10, and 11 and support trimming and Native AOT. Generated extension properties require **C# 14 and a compatible .NET 10 SDK**, including when targeting .NET 8. Set `<LangVersion>14.0</LangVersion>` in the consuming project.
 
 ## Packages
 
@@ -85,14 +85,14 @@ dotnet run --project tests/TedToolkit.Specifications.Analyzers.Tests -c Release 
 dotnet run --project tests/TedToolkit.Specifications.Sql.Tests -c Release --no-build
 ```
 
-Core and SQL tests run on .NET 8, 9, and 10 in CI. The default test target is .NET 10; select an older runtime with `-p:TestFramework=net8.0` or `-p:TestFramework=net9.0` and allow that invocation to build:
+Core and SQL tests run on .NET 8, 9, 10, and 11 in CI. The default test target is .NET 11; select an older runtime with `-p:TestFramework=net8.0`, `-p:TestFramework=net9.0`, or `-p:TestFramework=net10.0` and allow that invocation to build:
 
 ```powershell
 dotnet run --project tests/TedToolkit.Specifications.Tests -c Release -p:TestFramework=net8.0
 dotnet run --project tests/TedToolkit.Specifications.Sql.Tests -c Release -p:TestFramework=net9.0
 ```
 
-Install the corresponding .NET runtime before running each target. Roslyn Analyzer tests use .NET 10, and Native AOT verification publishes the .NET 10 TUnit projects. The same generator regressions also execute through a statically compiled core test under Native AOT.
+Install the corresponding .NET runtime before running each target. Roslyn Analyzer tests use .NET 11, and Native AOT verification publishes the .NET 11 TUnit projects. The same generator regressions also execute through a statically compiled core test under Native AOT.
 
 `Build/Program.cs` follows Localizations: Sourcy supplies typed solution and project paths, and `TedPipeline.ExecuteAsync()` runs the standard shared pipeline. `.github/workflows/build.yml` calls the TedToolkit reusable workflow, which runs this entry point and manages build and release outputs. `verify.yml` separately supplies PostgreSQL and runs the repository's package and Native AOT verification.
 
