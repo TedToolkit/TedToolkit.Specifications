@@ -75,7 +75,7 @@ Every predicate leaf yields a non-null Boolean, preserving in-memory null behavi
 
 The common SQL assembly exports only `SqlTranslator` and `SqlColumnMap<TCandidate>`. Each database assembly exports its translator class. SQL writers, type classification, value validation, and column resolution stay internal. Protected translation hooks remain available because adapters inherit across assembly boundaries; public translation uses the two `ToSql` overloads.
 
-Runtime targets are .NET 8, 9, and 10; generated member properties require C# 14. See [repository setup and local packaging](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/README.md), the [core guide](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/src/TedToolkit.Specifications/README.md), and [diagnostic catalog](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/docs/diagnostics.md).
+Runtime targets are .NET 8, 9, 10, and 11; generated member properties require C# 14. See [repository setup and local packaging](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/README.md), the [core guide](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/src/TedToolkit.Specifications/README.md), and [diagnostic catalog](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/docs/diagnostics.md).
 
 ## Agent skill
 
