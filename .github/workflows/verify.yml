@@ -36,11 +36,14 @@ jobs:
           submodules: recursive
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.x
-            9.0.x
-            10.0.x
-            11.0.x
+          dotnet-version: '11.0.x'
+      - name: Install .NET runtimes for compatibility tests
+        shell: bash
+        run: |
+          curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$RUNNER_TEMP/dotnet-install.sh"
+          for channel in 8.0 9.0 10.0; do
+            bash "$RUNNER_TEMP/dotnet-install.sh" --runtime dotnet --channel "$channel" --install-dir "$DOTNET_ROOT" --skip-non-versioned-files --no-path
+          done
       - run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
       - name: Build all targets
         run: dotnet build TedToolkit.Specifications.slnx -c Release -m:1 -p:UseSharedCompilation=false
