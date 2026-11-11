@@ -18,7 +18,7 @@
 - Package the generator and Analyzer with core and verify isolated NuGet consumption.
 - Pack Analyzer DLLs directly in the core csproj and set solution BuildDependency entries; do not add Analyzer asset props or custom packaging targets.
 - Use the shared TedToolkit reusable workflow for CI. Its repository variables identify the solution, test projects, and package projects.
-- The `externals/TedToolkit` submodule provides the MSBuild configuration for direct local builds.
+- MSBuild restores the shared configuration from the version of `TedToolkit.Build.Sdk` pinned in `global.json`.
 - Run TUnit tests with `dotnet run --project <test-project> -c Release`.
 - Use direct dotnet commands locally. The verification workflow covers real PostgreSQL, isolated NuGet consumption, and Native AOT; PostgreSQL uses `SPECIFICATION_POSTGRES`.
 - Verify Native AOT by publishing and executing the core and SQL TUnit projects; keep usage examples in README files rather than a Sample project.

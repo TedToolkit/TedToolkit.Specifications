@@ -3,7 +3,7 @@
     <File Path=".editorconfig" />
     <File Path=".github/workflows/build.yml" />
     <File Path=".gitignore" />
-    <File Path=".gitmodules" />
+
     <File Path=".github/workflows/verify.yml" />
     <File Path="AGENTS.md" />
     <File Path="CLAUDE.md" />

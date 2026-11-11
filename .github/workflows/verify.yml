@@ -32,8 +32,6 @@ jobs:
       SPECIFICATION_POSTGRES: Host=localhost;Port=5432;Database=specification_test;Username=specification_test;Password=specification_test
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |

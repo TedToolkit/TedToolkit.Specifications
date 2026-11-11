@@ -45,7 +45,6 @@ Choose core for in-memory specifications, or one database package for SQL. Datab
 These packages are currently built locally; publication to NuGet is not part of repository verification. To build the source:
 
 ```powershell
-git submodule update --init --recursive
 dotnet build TedToolkit.Specifications.slnx -c Release
 ```
 
@@ -75,10 +74,9 @@ All 18 diagnostic titles and messages use `TedToolkit.Localizations` generated s
 
 ## Development and shared CI
 
-The main branch is `development`. `externals/TedToolkit` is a pinned Git submodule providing shared CodeAnalysis, NuGet, and build infrastructure. Owned projects use the shared `.editorconfig`, StyleCop configuration, and .NET, Roslynator, StyleCop, and Sonar analyzers.
+The main branch is `development`. MSBuild restores the shared configuration from the version of `TedToolkit.Build.Sdk` pinned in `global.json`. Owned projects use the shared `.editorconfig`, StyleCop configuration, and .NET, Roslynator, StyleCop, and Sonar analyzers.
 
 ```powershell
-git submodule update --init --recursive
 dotnet build TedToolkit.Specifications.slnx -c Release
 dotnet run --project tests/TedToolkit.Specifications.Tests -c Release --no-build
 dotnet run --project tests/TedToolkit.Specifications.Analyzers.Tests -c Release --no-build
