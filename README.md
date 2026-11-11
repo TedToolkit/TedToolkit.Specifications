@@ -94,9 +94,7 @@ dotnet run --project tests/TedToolkit.Specifications.Sql.Tests -c Release -p:Tes
 
 Install the corresponding .NET runtime before running each target. Roslyn Analyzer tests use .NET 10, and Native AOT verification publishes the .NET 10 TUnit projects. The same generator regressions also execute through a statically compiled core test under Native AOT.
 
-`Build/Program.cs` follows Localizations: Sourcy supplies typed solution and project paths, and `TedPipeline.ExecuteAsync()` runs the standard shared pipeline. `.github/workflows/build.yml` calls the TedToolkit reusable workflow, which runs this entry point and manages build and release outputs. `verify.yml` separately supplies PostgreSQL and runs the repository's package and Native AOT verification.
-
-The shared workflow invokes `dotnet run --project Build/Build.csproj`. Local verification uses the direct dotnet commands above. Build orchestration is excluded from ordinary solution builds.
+GitHub Actions uses the shared TedToolkit workflow to build, test, and pack. The separate verification workflow supplies PostgreSQL and runs the repository’s package and Native AOT checks. For local verification, use the direct .NET commands above.
 
 The core project directly packs the Analyzer and its dependencies under `analyzers/dotnet/cs`. Solution `BuildDependency` entries build the Analyzer before the core package and source tests. Build the solution before running individual source projects; NuGet consumers receive the bundled Analyzer automatically.
 

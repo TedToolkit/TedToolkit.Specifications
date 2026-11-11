@@ -1,7 +1,4 @@
 <Solution>
-  <Folder Name="/Build/">
-    <Project Path="Build/Build.csproj"><Build Project="false" /></Project>
-  </Folder>
   <Folder Name="/SolutionItems/">
     <File Path=".editorconfig" />
     <File Path=".github/workflows/build.yml" />
