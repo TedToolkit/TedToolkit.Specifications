@@ -32,14 +32,16 @@ jobs:
       SPECIFICATION_POSTGRES: Host=localhost;Port=5432;Database=specification_test;Username=specification_test;Password=specification_test
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.x
-            9.0.x
-            10.0.x
+          dotnet-version: '11.0.x'
+      - name: Install .NET runtimes for compatibility tests
+        shell: bash
+        run: |
+          curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$RUNNER_TEMP/dotnet-install.sh"
+          for channel in 8.0 9.0 10.0; do
+            bash "$RUNNER_TEMP/dotnet-install.sh" --runtime dotnet --channel "$channel" --install-dir "$DOTNET_ROOT" --skip-non-versioned-files --no-path
+          done
       - run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
       - name: Build all targets
         run: dotnet build TedToolkit.Specifications.slnx -c Release -m:1 -p:UseSharedCompilation=false
@@ -50,7 +52,7 @@ jobs:
               dotnet run --project "tests/$project/$project.csproj" -c Release --no-build -- --no-progress --output Detailed --minimum-expected-tests 1
               if ($LASTEXITCODE -ne 0) { throw "Tests failed: $project." }
           }
-          foreach ($framework in @('net8.0', 'net9.0')) {
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
               foreach ($project in @('TedToolkit.Specifications.Tests', 'TedToolkit.Specifications.Sql.Tests')) {
                   dotnet run --project "tests/$project/$project.csproj" -c Release "-p:TestFramework=$framework" -- --no-progress --output Detailed --minimum-expected-tests 1
                   if ($LASTEXITCODE -ne 0) { throw "Tests failed: $project on $framework." }
@@ -62,14 +64,32 @@ jobs:
         run: |
           $version = ([xml](Get-Content -LiteralPath 'Directory.Build.props' -Raw)).Project.PropertyGroup.Version
           $consumer = Join-Path $PWD '.artifacts/consumer'
-          $packages = Join-Path $PWD '.artifacts/packages'
           $cache = Join-Path $PWD '.artifacts/consumer-packages'
           New-Item -ItemType Directory -Path $consumer -Force | Out-Null
           Set-Content -Path "$consumer/Directory.Build.props", "$consumer/Directory.Packages.props" -Value '<Project />'
+          @'
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="verified-packages" value="../packages" />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+            <packageSourceMapping>
+              <clear />
+              <packageSource key="verified-packages">
+                <package pattern="TedToolkit.Specifications" />
+                <package pattern="TedToolkit.Specifications.*" />
+              </packageSource>
+              <packageSource key="nuget.org">
+                <package pattern="*" />
+              </packageSource>
+            </packageSourceMapping>
+          </configuration>
+          '@ | Set-Content -LiteralPath "$consumer/NuGet.Config"
           @"
           <Project Sdk="Microsoft.NET.Sdk">
             <PropertyGroup>
-              <TargetFramework>net10.0</TargetFramework>
+              <TargetFramework>net11.0</TargetFramework>
               <OutputType>Exe</OutputType>
               <LangVersion>14.0</LangVersion>
               <ImplicitUsings>enable</ImplicitUsings>
@@ -99,7 +119,7 @@ jobs:
 
           '@
           Set-Content -LiteralPath "$consumer/Program.cs" -Value $exampleSource.Insert($models, $checks + "`n")
-          dotnet build "$consumer/Consumer.csproj" -c Release "-p:RestoreAdditionalProjectSources=$packages" "-p:RestorePackagesPath=$cache"
+          dotnet build "$consumer/Consumer.csproj" -c Release "-p:RestorePackagesPath=$cache"
           if ($LASTEXITCODE -ne 0) { throw 'The packaged README example failed to compile.' }
           dotnet run --project "$consumer/Consumer.csproj" -c Release --no-build
           if ($LASTEXITCODE -ne 0) { throw 'The packaged README example failed to run.' }

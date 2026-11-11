@@ -15,7 +15,7 @@ var sql = $"SELECT {column} FROM orders WHERE {condition}";
 public sealed record Order(decimal Amount);
 ```
 
-Import `TedToolkit.Specifications` and `TedToolkit.Specifications.Sql.Sqlite`. Optional `SqlColumnMap<T>` overrides property paths or table aliases. See the [shared SQL guide](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/src/TedToolkit.Specifications.Sql/README.md) for null semantics, storage assumptions, and parameter binding. Runtime targets are .NET 8, 9, and 10, including Native AOT.
+Import `TedToolkit.Specifications` and `TedToolkit.Specifications.Sql.Sqlite`. Optional `SqlColumnMap<T>` overrides property paths or table aliases. See the [shared SQL guide](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/src/TedToolkit.Specifications.Sql/README.md) for null semantics, storage assumptions, and parameter binding. Runtime targets are .NET 8, 9, 10, and 11, including Native AOT.
 
 Use C# 14 with a compatible .NET 10 SDK. See [repository setup](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/README.md) for source use and local NuGet packages. SQLite text comparisons use BINARY collation; literal matching uses `instr` and `substr`, and instant comparisons use `julianday`. The parameter budget defaults to 1000 and cannot exceed 32766.
 

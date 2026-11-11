@@ -29,7 +29,7 @@ public sealed record Customer(string? Name);
 
 Generated member properties expose the abstract selection API. The public `MemberSelection` constructor is a bridge for generated code in another assembly; its `Parent` and `Name` metadata are internal. See the [public API boundary](src/TedToolkit.Specifications/README.md#public-api-boundary).
 
-The runtime libraries target .NET 8, 9, and 10 and support trimming and Native AOT. Generated extension properties require **C# 14 and a compatible .NET 10 SDK**, including when targeting .NET 8. Set `<LangVersion>14.0</LangVersion>` in the consuming project.
+The runtime libraries target .NET 8, 9, 10, and 11 and support trimming and Native AOT. Generated extension properties require **C# 14 and a compatible .NET 10 SDK**, including when targeting .NET 8. Set `<LangVersion>14.0</LangVersion>` in the consuming project.
 
 ## Packages
 
@@ -45,7 +45,6 @@ Choose core for in-memory specifications, or one database package for SQL. Datab
 These packages are currently built locally; publication to NuGet is not part of repository verification. To build the source:
 
 ```powershell
-git submodule update --init --recursive
 dotnet build TedToolkit.Specifications.slnx -c Release
 ```
 
@@ -75,28 +74,25 @@ All 18 diagnostic titles and messages use `TedToolkit.Localizations` generated s
 
 ## Development and shared CI
 
-The main branch is `development`. `externals/TedToolkit` is a pinned Git submodule providing shared CodeAnalysis, NuGet, and build infrastructure. Owned projects use the shared `.editorconfig`, StyleCop configuration, and .NET, Roslynator, StyleCop, and Sonar analyzers.
+The main branch is `development`. MSBuild restores the shared configuration from the version of `TedToolkit.Build.Sdk` pinned in `global.json`. Owned projects use the shared `.editorconfig`, StyleCop configuration, and .NET, Roslynator, StyleCop, and Sonar analyzers.
 
 ```powershell
-git submodule update --init --recursive
 dotnet build TedToolkit.Specifications.slnx -c Release
 dotnet run --project tests/TedToolkit.Specifications.Tests -c Release --no-build
 dotnet run --project tests/TedToolkit.Specifications.Analyzers.Tests -c Release --no-build
 dotnet run --project tests/TedToolkit.Specifications.Sql.Tests -c Release --no-build
 ```
 
-Core and SQL tests run on .NET 8, 9, and 10 in CI. The default test target is .NET 10; select an older runtime with `-p:TestFramework=net8.0` or `-p:TestFramework=net9.0` and allow that invocation to build:
+Core and SQL tests run on .NET 8, 9, 10, and 11 in CI. The default test target is .NET 11; select an older runtime with `-p:TestFramework=net8.0`, `-p:TestFramework=net9.0`, or `-p:TestFramework=net10.0` and allow that invocation to build:
 
 ```powershell
 dotnet run --project tests/TedToolkit.Specifications.Tests -c Release -p:TestFramework=net8.0
 dotnet run --project tests/TedToolkit.Specifications.Sql.Tests -c Release -p:TestFramework=net9.0
 ```
 
-Install the corresponding .NET runtime before running each target. Roslyn Analyzer tests use .NET 10, and Native AOT verification publishes the .NET 10 TUnit projects. The same generator regressions also execute through a statically compiled core test under Native AOT.
+Install the corresponding .NET runtime before running each target. Roslyn Analyzer tests use .NET 11, and Native AOT verification publishes the .NET 11 TUnit projects. The same generator regressions also execute through a statically compiled core test under Native AOT.
 
-`Build/Program.cs` follows Localizations: Sourcy supplies typed solution and project paths, and `TedPipeline.ExecuteAsync()` runs the standard shared pipeline. `.github/workflows/build.yml` calls the TedToolkit reusable workflow, which runs this entry point and manages build and release outputs. `verify.yml` separately supplies PostgreSQL and runs the repository's package and Native AOT verification.
-
-The shared workflow invokes `dotnet run --project Build/Build.csproj`. Local verification uses the direct dotnet commands above. Build orchestration is excluded from ordinary solution builds.
+GitHub Actions uses the shared TedToolkit workflow to build, test, and pack. The separate verification workflow supplies PostgreSQL and runs the repository’s package and Native AOT checks. For local verification, use the direct .NET commands above.
 
 The core project directly packs the Analyzer and its dependencies under `analyzers/dotnet/cs`. Solution `BuildDependency` entries build the Analyzer before the core package and source tests. Build the solution before running individual source projects; NuGet consumers receive the bundled Analyzer automatically.
 

@@ -17,8 +17,8 @@
 - Default SQL column names to complete member paths quoted as single identifiers. Allow optional map overrides and scalar-root bindings. Do not infer joins or substitute default values for missing parents.
 - Package the generator and Analyzer with core and verify isolated NuGet consumption.
 - Pack Analyzer DLLs directly in the core csproj and set solution BuildDependency entries; do not add Analyzer asset props or custom packaging targets.
-- Keep Build as a single Program.cs using Sourcy paths and the standard TedPipeline.ExecuteAsync entry point, following Localizations.
-- Use the shared `externals/TedToolkit` submodule and reusable workflow. The Build project is orchestration and excluded from normal solution builds.
+- Use the shared TedToolkit reusable workflow for CI. Its repository variables identify the solution, test projects, and package projects.
+- MSBuild restores the shared configuration from the version of `TedToolkit.Build.Sdk` pinned in `global.json`.
 - Run TUnit tests with `dotnet run --project <test-project> -c Release`.
 - Use direct dotnet commands locally. The verification workflow covers real PostgreSQL, isolated NuGet consumption, and Native AOT; PostgreSQL uses `SPECIFICATION_POSTGRES`.
 - Verify Native AOT by publishing and executing the core and SQL TUnit projects; keep usage examples in README files rather than a Sample project.

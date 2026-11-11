@@ -1,12 +1,9 @@
 <Solution>
-  <Folder Name="/Build/">
-    <Project Path="Build/Build.csproj"><Build Project="false" /></Project>
-  </Folder>
   <Folder Name="/SolutionItems/">
     <File Path=".editorconfig" />
     <File Path=".github/workflows/build.yml" />
     <File Path=".gitignore" />
-    <File Path=".gitmodules" />
+
     <File Path=".github/workflows/verify.yml" />
     <File Path="AGENTS.md" />
     <File Path="CLAUDE.md" />
