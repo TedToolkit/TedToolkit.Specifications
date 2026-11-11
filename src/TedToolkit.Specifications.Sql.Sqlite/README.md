@@ -18,3 +18,7 @@ public sealed record Order(decimal Amount);
 Import `TedToolkit.Specifications` and `TedToolkit.Specifications.Sql.Sqlite`. Optional `SqlColumnMap<T>` overrides property paths or table aliases. See the [shared SQL guide](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/src/TedToolkit.Specifications.Sql/README.md) for null semantics, storage assumptions, and parameter binding. Runtime targets are .NET 8, 9, and 10, including Native AOT.
 
 Use C# 14 with a compatible .NET 10 SDK. See [repository setup](https://github.com/TedToolkit/TedToolkit.Specifications/blob/development/README.md) for source use and local NuGet packages. SQLite text comparisons use BINARY collation; literal matching uses `instr` and `substr`, and instant comparisons use `julianday`. The parameter budget defaults to 1000 and cannot exceed 32766.
+
+## Agent skill
+
+The `build-typed-specifications` skill ships in `TedToolkit.Specifications`, which this package restores as a dependency. If your project references only this package, get the resolved `TedToolkit.Specifications` version from `dotnet package list --include-transitive` and import the skill with `dotnet-package-skills install --package TedToolkit.Specifications@<resolved-version>`.
